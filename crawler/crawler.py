@@ -31,6 +31,7 @@ with open("stoplist.txt", "r+") as data:
       continue
     stop_words.add(line.strip().lower())
 
+word_set = set()
 news_per_day = {}
 '''
 news_per_day
@@ -52,11 +53,10 @@ while True:
 		break
 	page_index += 10
 
-
 	for tag in news_tags:
 		time_tmp = str(tag.find('span',attrs={'class': 'date'}).get_text())
 		time = datetime.datetime.strptime(time_tmp,"%b %d, %Y").strftime('%Y-%m-%d')
-		
+
 		t = tag.find('a',attrs={'id': 'n-cn-'})
 		title = ''.join([tag if ord(tag) < 128 else ' ' for tag in t.text])
 		
@@ -69,9 +69,6 @@ while True:
 			news_per_day[time] = []
 		text = ''.join([word if ord(word) < 128 else ' ' for word in article.text])
 		news_per_day[time].append(title + " " + text)
-
-
-word_set = set()
 
 def after_tokenize_remove_digit_and_character(token_list):
 	after_process_tokens = []
@@ -123,13 +120,8 @@ daily_price	= {}
 for row in reader:
 	daily_price[row[0]] = int(row[1])
 
-
-
 daily_token_count = count_daily_tokens(tokens_perday)
 token_count_pd = pd.DataFrame.from_dict(daily_token_count, orient='index')
 daily_price_pd = pd.DataFrame.from_dict(daily_price, orient='index')
 res = pd.concat([daily_price_pd, token_count_pd, ], axis=1)
 res.to_csv("./res.csv")
-
-for_spares = res.drop(res.columns[0], inplace=True)
-
