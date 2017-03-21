@@ -66,28 +66,28 @@ while True:
 			article.parse()
 		
 		if time not in news_per_day:
-			news_per_day[time] = []
+			news_per_day[time] = ""
 		text = ''.join([word if ord(word) < 128 else ' ' for word in article.text])
-		news_per_day[time].append(title + " " + text)
+		news_per_day[time] += str(title + " " + text + " ")
 
 def after_tokenize_remove_digit_and_character(token_list):
 	after_process_tokens = []
 	for word in token_list:
-		word.strip()
-
+		word = word.lower().strip()
 		if len(word) > 1 and not word.isdigit():
 			if word not in stop_words:
-				after_process_tokens.append(word)
-				word_set.add(word)
+				if not any(char.isdigit() for char in word):
+					after_process_tokens.append(word)
+					word_set.add(word)
 	return after_process_tokens		
 
 
 
 for time, news in news_per_day.items():
 	regex = re.compile('[%s]' % re.escape(string.punctuation))
-	text = [x for x in news]
+	
 
-	token_text = nltk.word_tokenize(str(text).lower())
+	token_text = nltk.word_tokenize(news)
 	new_review = []
 
 	for token in token_text: 

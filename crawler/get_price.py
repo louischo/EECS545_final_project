@@ -19,9 +19,3 @@ writer = csv.writer(open('apple_feb_daily_price.csv', 'w'))
 writer.writerow(['date', 'price'])
 for key, value in daily_price.items():
    writer.writerow([key, value])
-
-with open('feb_apple_data.csv', 'wb') as f:
-	writer = csv.writer(f)
-	price_date = csv.reader(open('apple_feb_daily_price.csv', 'r'))
-	for row in price_date:
-		writer.writerow([row[0], row[1]])
