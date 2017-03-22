@@ -2,3 +2,4 @@
 /crawler/*.csv
 /crawler/*.p
 /crawler/test.py
+/flux/*
