@@ -1,5 +1,5 @@
-from gensim import corpora, models, similarities
 import os
+from gensim import corpora, models, similarities
 import csv
 
 if (os.path.exists("../data/gensim_data/vocab.dict")):
