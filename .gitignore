@@ -1,4 +1,4 @@
-/data/*
+/data/word2vec_models/*
 /crawler/*.csv
 /crawler/*.p
 /crawler/test.py
