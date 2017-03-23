@@ -3,3 +3,4 @@
 /crawler/*.p
 /crawler/test.py
 /flux/*
+.DS_Store
