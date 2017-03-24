@@ -1,4 +1,4 @@
-from params import *
+from utils.params import *
 from gensim import corpora, models
 import re
 from nltk.tokenize import RegexpTokenizer
@@ -38,10 +38,12 @@ def read_news(data_path, stop_list_path):
     #               for doc in doc_list]
     
     # Using nltk
-    tokenizer = RegexpTokenizer(r'[a-zA-z]+')
-    text_list = [tokenizer.tokenize(doc) for doc in doc_list]
-    
-    
+    tokenizer = RegexpTokenizer(r'[a-zA-z]{2,}') # Exclude single letter
+    text_list_not_filtered = [tokenizer.tokenize(doc) for doc in doc_list]
+    text_list = []
+    for text in text_list_not_filtered:
+        filtered_text = [word for word in text if word.lower() not in stop_list]
+        text_list.append(filtered_text)
     # remove words that appear only once
     # frequency = defaultdict(int)
     # for text in text_list:
@@ -55,12 +57,14 @@ def read_news(data_path, stop_list_path):
     # Build dictionary for unique vocabulary
     dictionary = corpora.Dictionary(text_list)
     #mapping = dictionary.token2id # mapping from vocabulary to index in python dictionary
+    print('Saving gensim dictionary to ' + gensim_save_path + 'vocab.dict')
     dictionary.save(gensim_save_path + 'vocab.dict')  # store the dictionary, for future reference
     # print(dictionary)
     
     # Convert documents into vectors
     corpus = [dictionary.doc2bow(text) for text in text_list]
     # Save the vectorized documents in Market Matrix format
+    print('Saving gensim corpus to ' + gensim_save_path + 'corpus.mm')
     corpora.MmCorpus.serialize(gensim_save_path + 'corpus.mm', corpus)  # store to disk, for later use
     # pprint(corpus)
     return dictionary, corpus
@@ -86,6 +90,7 @@ def dic2csv(dictionary, gensim_save_path):
     
     mapping = dictionary.token2id
     
+    print('Saving gensim dictionary as .csv ' + gensim_save_path + 'gensim_word_dic.csv')
     word_dic_writer = csv.writer(open(gensim_save_path + 'gensim_word_dic.csv', 'w'))
     
     for word, idx in mapping.items():
@@ -94,7 +99,7 @@ def dic2csv(dictionary, gensim_save_path):
 #==============================================================================
 # Build gensim LSI model from gensim corpus
 #==============================================================================
-def lsi_transform(corpus, num_dims):
+def lsi_transform(corpus, num_dims, save=True):
     dictionary, corpus = load_dic_corpus(gensim_save_path)    
     save_path = gensim_save_path + "lsi_model.lsi"
    
@@ -107,18 +112,19 @@ def lsi_transform(corpus, num_dims):
     lsi = models.LsiModel(corpus_tfidf, id2word=dictionary, num_topics=num_dims)
     corpus_lsi = lsi[corpus_tfidf]
     print('LSI corpus created.')
-    for doc in corpus_lsi:
-    	print(doc) 
     
-    lsi.save(save_path)
-    print("LSI model saved to: " + save_path)
+    if save:
+        lsi.save(save_path)
+        print("LSI model saved to: " + save_path)
+    
+    return lsi, corpus_lsi
 
 #==============================================================================
 # Convert gensim corpus to scipy sparse coo matrix 
 #==============================================================================
-def corpus_to_sparse_mat(dictionary, corpus):
+def corpus_to_sparse_mat(num_features, corpus):
     for doc in corpus:
-        row = [0] * len(dictionary.token2id)
+        row = [0] * num_features
         for(x,y) in doc:
             row[x] = y
         if 'data_sparse' in vars():
@@ -127,3 +133,12 @@ def corpus_to_sparse_mat(dictionary, corpus):
             data_sparse = ss.coo_matrix(row)
     return data_sparse
 
+#==============================================================================
+# Invert a gensim dictionary and output an inversed python dictionary
+#==============================================================================
+def invert_dictionary(dictionary):
+    mapping = dictionary.token2id
+    inv_mapping = {}
+    for k, v in mapping.items():
+        inv_mapping[v] = k
+    return inv_mapping
