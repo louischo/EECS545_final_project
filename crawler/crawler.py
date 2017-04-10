@@ -39,29 +39,41 @@ news_per_day
 key is time, value is list of texts, each text is title + news text
 '''
 page_index = 0
-tokens_perday = {}
+# tokens_perday = {}
 '''
 tokens_perday
 key is time, value daily tokens
 '''
-urls = ['https://www.google.com/finance/company_news?q=NASDAQ%3AAAPL&ei=9NvQWPG2J4i3jAH12prADw&startdate=2017-01-01&enddate=2017-02-01&start=',
-		'https://www.google.com/finance/company_news?q=NASDAQ%3AAAPL&ei=Ui3PWLC6EYrNjAHb-I-YBA&startdate=2017-02-01&enddate=2017-03-01&start=']
-
+# urls = ['https://www.google.com/finance/company_news?q=NASDAQ%3AAAPL&ei=9NvQWPG2J4i3jAH12prADw&startdate=2017-01-01&enddate=2017-02-01&start=',
+# 		'https://www.google.com/finance/company_news?q=NASDAQ%3AAAPL&ei=Ui3PWLC6EYrNjAHb-I-YBA&startdate=2017-02-01&enddate=2017-03-01&start=',
+# 		'https://www.google.com/finance/company_news?q=NASDAQ%3AAAPL&ei=bufrWKjUJY2YjAHFjbLIAQ&startdate=2017-03-01&enddate=2017-04-01&start=']
+# urls = ['https://www.google.com/finance/company_news?q=NASDAQ%3AYHOO&ei=I-_rWIHnMYKrjAG5pLa4CA&startdate=2017-04-01&enddate=2017-05-01&start=']
+# urls = ['https://www.google.com/finance/company_news?q=NASDAQ%3AYHOO&ei=PvDrWNHcEISPjAHa97TYDg&startdate=2017-01-01&enddate=2017-02-01&start=',
+# 		'https://www.google.com/finance/company_news?q=NASDAQ%3AYHOO&ei=UfDrWJLIAtHkjAHtsrKIAg&startdate=2017-02-01&enddate=2017-03-01&start=',
+# 		'https://www.google.com/finance/company_news?q=NASDAQ%3AYHOO&ei=cfDrWMGIEo72jAGu-7SwAQ&startdate=2017-03-01&enddate=2017-04-01&start=']
+# urls = ['https://www.google.com/finance/company_news?q=NASDAQ%3AGOOGL&ei=AvPrWOHoJsWQ2Aa42K_4Dw&startdate=2017-01-01&enddate=2017-02-01&start=',
+		# 'https://www.google.com/finance/company_news?q=NASDAQ%3AGOOGL&ei=lPPrWNHeOYOA2AbEv4-QAg&startdate=2017-02-01&enddate=2017-03-01&start=',
+		# 'https://www.google.com/finance/company_news?q=NASDAQ%3AGOOGL&ei=pvPrWKq0Bo6JjAGwqbPIBw&startdate=2017-03-01&enddate=2017-04-01&start=']
+urls = ['https://www.google.com/finance/company_news?q=NASDAQ%3AGOOGL&ei=v_XrWMC9KsOzjAGSuZ24AQ&startdate=2017-04-01&enddate=2017-05-01&start=']
 for url in urls:
 	page_index = 0
+	tokens_perday = {}
 	while True:
 		# res = requests.get("https://www.google.com/finance/company_news?q=NASDAQ%3AAAPL&ei=Ui3PWLC6EYrNjAHb-I-YBA&startdate=2017-02-01&enddate=2017-03-01&start="+str(page_index)+"&num=10")
 		res = requests.get(url + str(page_index)+"&num=10")
 		soup = BeautifulSoup(res.text,"html.parser")
 		news_tags = soup.find_all('div',attrs={'class': 'g-section news sfe-break-bottom-16'})
 		if len(news_tags) == 0:
-			print('No More News at page ' + str(page_index))
+			print('No More News at page ' + str(page_index / 10))
 			break
 		page_index += 10
 
 		for tag in news_tags:
 			time_tmp = str(tag.find('span',attrs={'class': 'date'}).get_text())
-			time = datetime.datetime.strptime(time_tmp,"%b %d, %Y").strftime('%Y-%m-%d')
+			if time_tmp.lower().find('ago') == -1:
+				time = datetime.datetime.strptime(time_tmp,"%b %d, %Y").strftime('%Y-%m-%d')
+			else:
+				time = datetime.datetime.now().strftime('%Y-%m-%d')
 
 			t = tag.find('a',attrs={'id': 'n-cn-'})
 			title = ''.join([tag if ord(tag) < 128 else ' ' for tag in t.text])
@@ -76,8 +88,15 @@ for url in urls:
 			text = ''.join([word if ord(word) < 128 else ' ' for word in article.text])
 			news_per_day[time] += str(title + " " + text + " ")
 
-cPickle.dump(news_per_day, open("news_per_day.p", "wb" ) )
+	with open("../data/Alphabet201704news.txt", "w") as text_file:
+		for time, content in news_per_day.items():
+			print(time, file=text_file)
+			print(content, file=text_file)		
 
+
+
+cPickle.dump(news_per_day, open("news_per_day.p", "wb" ) )
+'''
 def after_tokenize_remove_digit_and_character(token_list):
 	after_process_tokens = []
 	for word in token_list:
@@ -134,3 +153,4 @@ token_count_pd = pd.DataFrame.from_dict(daily_token_count, orient='index')
 daily_price_pd = pd.DataFrame.from_dict(daily_price, orient='index')
 res = pd.concat([daily_price_pd, token_count_pd, ], axis=1)
 res.to_csv("./res.csv")
+'''
