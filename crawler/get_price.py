@@ -24,8 +24,9 @@ for key, value in daily_price.items():
    writer.writerow([key, value])
 '''
 
-start_date = '2017-01-04'
-end_date = '2017-02-28'
+start_date = '2017-01-03'
+end_date = '2017-04-11'
+company_name = 'alphabet'
 dates = []
 count = 1
 while True:
@@ -40,7 +41,7 @@ while True:
 
 daily_price	= {}
 
-with open('apple_jan_feb.csv') as f:
+with open(company_name+'_price.csv') as f:
 	reader = csv.reader(f)
 	next(f)
 	for row in reader:
@@ -51,18 +52,18 @@ for date in dates:
 	if date not in daily_price:
 		previous_date = (datetime.datetime.strptime(date,'%Y-%m-%d') + datetime.timedelta(days=-1)).strftime('%Y-%m-%d')
 		daily_price[date] = daily_price[previous_date]
-
-writer = csv.writer(open('test_not_shift.csv', 'w'))
+'''
+writer = csv.writer(open('../data/not_shift.csv', 'w'))
 writer.writerow(['date', 'price'])
 for date in sorted(daily_price.keys()):
    writer.writerow([date, daily_price[date]])
-
+'''
 shift_next_previous_date_price = {}
 for date, price in daily_price.items():
 	shift_date = (datetime.datetime.strptime(date,'%Y-%m-%d') + datetime.timedelta(days=-1)).strftime('%Y-%m-%d')
 	shift_next_previous_date_price[shift_date] = price
 
-writer = csv.writer(open('test_shift.csv', 'w'))
+writer = csv.writer(open('../data/' + company_name + '_label.csv', 'w'))
 writer.writerow(['date', 'price'])
 for date in sorted(shift_next_previous_date_price.keys()):
    writer.writerow([date, shift_next_previous_date_price[date]])
