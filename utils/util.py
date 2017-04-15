@@ -100,7 +100,7 @@ def dic2csv(dictionary, gensim_save_path):
 # Build gensim LSI model from gensim corpus
 #==============================================================================
 def lsi_transform(corpus, num_dims, save=True):
-    dictionary, corpus = load_dic_corpus(gensim_save_path)    
+    dictionary, _ = load_dic_corpus(gensim_save_path)    
     save_path = gensim_save_path + "lsi_model.lsi"
    
     # Create a tf-idf model 
@@ -121,6 +121,7 @@ def lsi_transform(corpus, num_dims, save=True):
 
 #==============================================================================
 # Convert gensim corpus to scipy sparse coo matrix 
+# Slow. Use gensim.matutils.corpus2csc instead
 #==============================================================================
 def corpus_to_sparse_mat(num_features, corpus):
     for doc in corpus:
