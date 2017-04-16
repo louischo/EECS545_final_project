@@ -5,22 +5,26 @@ from nltk.tokenize import RegexpTokenizer
 import csv
 import os
 import scipy.sparse as ss
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.feature_extraction.text import CountVectorizer
 #import string
 # from pprint import pprint  # pretty-printer
 
 
 #==============================================================================
-# Read .txt news data and produce gensim dictionary and corpus
+# Read .txt news data and produce sklearn dictionary and corpus
 #==============================================================================
 def read_news(data_path, stop_list_path):
     with open(data_path, 'r') as f:
     	# Find if a line is a date
         pattern = re.compile('\d{4}-\d{2}-\d{2}')
         doc_list = []
+        date_list = []
         doc = ''
         for line in f:
             if pattern.match(line) and len(doc) != 0:
                 doc_list.append(doc)
+                date_list.append(line.strip())
                 doc = ''	
             else:
                 doc = doc + line
@@ -38,12 +42,17 @@ def read_news(data_path, stop_list_path):
     #               for doc in doc_list]
     
     # Using nltk
-    tokenizer = RegexpTokenizer(r'[a-zA-z]{2,}') # Exclude single letter
-    text_list_not_filtered = [tokenizer.tokenize(doc) for doc in doc_list]
-    text_list = []
-    for text in text_list_not_filtered:
-        filtered_text = [word for word in text if word.lower() not in stop_list]
-        text_list.append(filtered_text)
+    tokenizer = RegexpTokenizer(r'[a-zA-Z]{2,}') # Exclude single letter
+    vectorizer = CountVectorizer(min_df=1, ngram_range=(1,1), tokenizer=tokenizer.tokenize, stop_words=stop_list)
+    corpus = vectorizer.fit_transform(doc_list)
+    dictionary = vectorizer.vocabulary_
+    dictionary_inv = dict(zip(dictionary.values(), dictionary.keys()))
+    date_news_dict = dict(zip(date_list, doc_list))
+#    text_list_not_filtered = [tokenizer.tokenize(doc) for doc in doc_list]
+#    text_list = []
+#    for text in text_list_not_filtered:
+#        filtered_text = [word for word in text if word.lower() not in stop_list]
+#        text_list.append(filtered_text)
     # remove words that appear only once
     # frequency = defaultdict(int)
     # for text in text_list:
@@ -54,20 +63,20 @@ def read_news(data_path, stop_list_path):
     #          for text in text_list]
     # pprint(text_list)
     
-    # Build dictionary for unique vocabulary
-    dictionary = corpora.Dictionary(text_list)
-    #mapping = dictionary.token2id # mapping from vocabulary to index in python dictionary
-    print('Saving gensim dictionary to ' + gensim_save_path + 'vocab.dict')
-    dictionary.save(gensim_save_path + 'vocab.dict')  # store the dictionary, for future reference
-    # print(dictionary)
-    
-    # Convert documents into vectors
-    corpus = [dictionary.doc2bow(text) for text in text_list]
-    # Save the vectorized documents in Market Matrix format
-    print('Saving gensim corpus to ' + gensim_save_path + 'corpus.mm')
-    corpora.MmCorpus.serialize(gensim_save_path + 'corpus.mm', corpus)  # store to disk, for later use
-    # pprint(corpus)
-    return dictionary, corpus
+#    # Build dictionary for unique vocabulary
+#    dictionary = corpora.Dictionary(text_list)
+#    #mapping = dictionary.token2id # mapping from vocabulary to index in python dictionary
+#    print('Saving gensim dictionary to ' + gensim_save_path + 'vocab.dict')
+#    dictionary.save(gensim_save_path + 'vocab.dict')  # store the dictionary, for future reference
+#    # print(dictionary)
+#    
+#    # Convert documents into vectors
+#    corpus = [dictionary.doc2bow(text) for text in text_list]
+#    # Save the vectorized documents in Market Matrix format
+#    print('Saving gensim corpus to ' + gensim_save_path + 'corpus.mm')
+#    corpora.MmCorpus.serialize(gensim_save_path + 'corpus.mm', corpus)  # store to disk, for later use
+#    # pprint(corpus)
+    return dictionary, corpus, date_news_dict
 
 #==============================================================================
 # Load existing gensim dictionary and corpus

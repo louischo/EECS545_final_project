@@ -4,3 +4,4 @@
 /crawler/test.py
 /flux/*
 .DS_Store
+/utils/__pycache__/*
