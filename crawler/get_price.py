@@ -24,9 +24,13 @@ for key, value in daily_price.items():
    writer.writerow([key, value])
 '''
 
-start_date = '2016-01-04'
-end_date = '2016-12-30'
-company_name = 'alphabet'
+
+company_name = 'yahoo'
+year = 2015
+
+start_date = str(year) + '-01-05'
+end_date = str(year) + '-12-30'
+
 dates = []
 count = 1
 while True:
@@ -41,7 +45,7 @@ while True:
 
 daily_price	= {}
 
-with open(company_name+'2016table.csv') as f:
+with open(company_name + str(year) + 'table.csv') as f:
 	reader = csv.reader(f)
 	next(f)
 	for row in reader:
@@ -63,7 +67,7 @@ for date, price in daily_price.items():
 	shift_date = (datetime.datetime.strptime(date,'%Y-%m-%d') + datetime.timedelta(days=-1)).strftime('%Y-%m-%d')
 	shift_next_previous_date_price[shift_date] = price
 
-writer = csv.writer(open('../data/' + company_name + '2016_label.csv', 'w'))
+writer = csv.writer(open('../data/' + company_name + str(year) + '_label.csv', 'w'))
 writer.writerow(['date', 'price'])
 for date in sorted(shift_next_previous_date_price.keys()):
    writer.writerow([date, shift_next_previous_date_price[date]])

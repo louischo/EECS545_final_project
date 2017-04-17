@@ -55,18 +55,18 @@ key is time, value daily tokens
 		# 'https://www.google.com/finance/company_news?q=NASDAQ%3AGOOGL&ei=lPPrWNHeOYOA2AbEv4-QAg&startdate=2017-02-01&enddate=2017-03-01&start=',
 		# 'https://www.google.com/finance/company_news?q=NASDAQ%3AGOOGL&ei=pvPrWKq0Bo6JjAGwqbPIBw&startdate=2017-03-01&enddate=2017-04-01&start=']
 
-urls = ['https://www.google.com/finance/company_news?q=NASDAQ%3AGOOGL&ei=SQ7zWPGQCouFmAHAhp_ICQ&startdate=2016-01-01&enddate=2016-02-01&start=',
-		'https://www.google.com/finance/company_news?q=NASDAQ%3AGOOGL&ei=SQ7zWPGQCouFmAHAhp_ICQ&startdate=2016-02-01&enddate=2016-03-01&start=',
-		'https://www.google.com/finance/company_news?q=NASDAQ%3AGOOGL&ei=SQ7zWPGQCouFmAHAhp_ICQ&startdate=2016-03-01&enddate=2016-04-01&start=',
-		'https://www.google.com/finance/company_news?q=NASDAQ%3AGOOGL&ei=SQ7zWPGQCouFmAHAhp_ICQ&startdate=2016-04-01&enddate=2016-05-01&start=',
-		'https://www.google.com/finance/company_news?q=NASDAQ%3AGOOGL&ei=SQ7zWPGQCouFmAHAhp_ICQ&startdate=2016-05-01&enddate=2016-06-01&start=',
-		'https://www.google.com/finance/company_news?q=NASDAQ%3AGOOGL&ei=SQ7zWPGQCouFmAHAhp_ICQ&startdate=2016-06-01&enddate=2016-07-01&start=',
-		'https://www.google.com/finance/company_news?q=NASDAQ%3AGOOGL&ei=SQ7zWPGQCouFmAHAhp_ICQ&startdate=2016-07-01&enddate=2016-08-01&start=',
-		'https://www.google.com/finance/company_news?q=NASDAQ%3AGOOGL&ei=SQ7zWPGQCouFmAHAhp_ICQ&startdate=2016-08-01&enddate=2016-09-01&start=',
-		'https://www.google.com/finance/company_news?q=NASDAQ%3AGOOGL&ei=SQ7zWPGQCouFmAHAhp_ICQ&startdate=2016-09-01&enddate=2016-10-01&start=',
-		'https://www.google.com/finance/company_news?q=NASDAQ%3AGOOGL&ei=SQ7zWPGQCouFmAHAhp_ICQ&startdate=2016-10-01&enddate=2016-11-01&start=',
-		'https://www.google.com/finance/company_news?q=NASDAQ%3AGOOGL&ei=SQ7zWPGQCouFmAHAhp_ICQ&startdate=2016-11-01&enddate=2016-12-01&start=',
-		'https://www.google.com/finance/company_news?q=NASDAQ%3AGOOGL&ei=SQ7zWPGQCouFmAHAhp_ICQ&startdate=2016-12-01&enddate=2017-01-01&start=']
+urls = ['https://www.google.com/finance/company_news?q=NASDAQ%3AYHOO&ei=DRn0WLj7MtHkjAHtsrKIAg&startdate=2015-01-01&enddate=2015-02-01&start=',
+		'https://www.google.com/finance/company_news?q=NASDAQ%3AYHOO&ei=DRn0WLj7MtHkjAHtsrKIAg&startdate=2015-02-01&enddate=2015-03-01&start=',
+		'https://www.google.com/finance/company_news?q=NASDAQ%3AYHOO&ei=DRn0WLj7MtHkjAHtsrKIAg&startdate=2015-03-01&enddate=2015-04-01&start=',
+		'https://www.google.com/finance/company_news?q=NASDAQ%3AYHOO&ei=DRn0WLj7MtHkjAHtsrKIAg&startdate=2015-04-01&enddate=2015-05-01&start=',
+		'https://www.google.com/finance/company_news?q=NASDAQ%3AYHOO&ei=DRn0WLj7MtHkjAHtsrKIAg&startdate=2015-05-01&enddate=2015-06-01&start=',
+		'https://www.google.com/finance/company_news?q=NASDAQ%3AYHOO&ei=DRn0WLj7MtHkjAHtsrKIAg&startdate=2015-06-01&enddate=2015-07-01&start=',
+		'https://www.google.com/finance/company_news?q=NASDAQ%3AYHOO&ei=DRn0WLj7MtHkjAHtsrKIAg&startdate=2015-07-01&enddate=2015-08-01&start=',
+		'https://www.google.com/finance/company_news?q=NASDAQ%3AYHOO&ei=DRn0WLj7MtHkjAHtsrKIAg&startdate=2015-08-01&enddate=2015-09-01&start=',
+		'https://www.google.com/finance/company_news?q=NASDAQ%3AYHOO&ei=DRn0WLj7MtHkjAHtsrKIAg&startdate=2015-09-01&enddate=2015-10-01&start=',
+		'https://www.google.com/finance/company_news?q=NASDAQ%3AYHOO&ei=DRn0WLj7MtHkjAHtsrKIAg&startdate=2015-10-01&enddate=2015-11-01&start=',
+		'https://www.google.com/finance/company_news?q=NASDAQ%3AYHOO&ei=DRn0WLj7MtHkjAHtsrKIAg&startdate=2015-11-01&enddate=2015-12-01&start=',
+		'https://www.google.com/finance/company_news?q=NASDAQ%3AYHOO&ei=DRn0WLj7MtHkjAHtsrKIAg&startdate=2015-12-01&enddate=2016-01-01&start=']
 
 # urls = 	['https://www.google.com/finance/company_news?q=NASDAQ%3AAAPL&ei=xNDyWMnSMIKJ2AapuJCIAg&startdate=2016-05-01&enddate=2016-06-01&start=']
 
@@ -103,14 +103,14 @@ for url in urls:
 			text = ''.join([word if ord(word) < 128 else ' ' for word in article.text])
 			news_per_day[time] += str(title + " " + text + " ")
 
-	with open("../data/Alphabet2016news.txt", "w") as text_file:
+	with open("../data/Yahoo2015news.txt", "w") as text_file:
 		for time, content in news_per_day.items():
 			print(time, file=text_file)
 			print(content, file=text_file)		
 
 
 
-cPickle.dump(news_per_day, open("news_per_day.p", "wb" ) )
+# cPickle.dump(news_per_day, open("news_per_day.p", "wb" ) )
 '''
 def after_tokenize_remove_digit_and_character(token_list):
 	after_process_tokens = []
