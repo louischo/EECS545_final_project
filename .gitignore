@@ -1,4 +1,5 @@
 /data/word2vec_models/*
+/data/gensim_data
 /crawler/*.csv
 /crawler/*.p
 /crawler/test.py

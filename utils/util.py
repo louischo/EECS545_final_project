@@ -7,14 +7,35 @@ import os
 import scipy.sparse as ss
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.feature_selection import chi2
+from sklearn.base import TransformerMixin, BaseEstimator
 #import string
 # from pprint import pprint  # pretty-printer
 
-
+#==============================================================================
+# A chi square test class: return features with p-value < p
+#==============================================================================
+class Chi2p(BaseEstimator, TransformerMixin):
+    def __init__(self, p):
+        self.p = p
+        self.chi2 = chi2
+        self.chis = None
+        self.pval = None
+        self.pval_c = None
+        
+    def fit(self, corpus, labels):
+        self.chis, self.pval = chi2(corpus, labels)
+        self.pval_c = self.pval < self.p
+        return self
+    
+    def transform(self, corpus):
+        return corpus[:, self.pval_c]
+        
 #==============================================================================
 # Read .txt news data and produce sklearn dictionary and corpus
 #==============================================================================
-def read_news(data_path, stop_list_path):
+def read_news(data_path):
+        
     with open(data_path, 'r') as f:
     	# Find if a line is a date
         pattern = re.compile('\d{4}-\d{2}-\d{2}')
@@ -29,25 +50,8 @@ def read_news(data_path, stop_list_path):
             else:
                 doc = doc + line
     # Now every entry in doc_list is a news piece
-    # Create a stop word list
-    stop_list = set()
-    with open(stop_list_path, "r+") as f:
-      for line in f:
-        if not line.strip():
-        	continue
-        stop_list.add(line.strip().lower())
-    
-    # text_list = [[word.strip(string.punctuation) for word in doc.lower().split() \
-    #               if word.strip(string.punctuation) not in stop_list and word.strip(string.punctuation).isalpha()] \
-    #               for doc in doc_list]
-    
-    # Using nltk
-    tokenizer = RegexpTokenizer(r'[a-zA-Z]{2,}') # Exclude single letter
-    vectorizer = CountVectorizer(min_df=1, ngram_range=(1,1), tokenizer=tokenizer.tokenize, stop_words=stop_list)
-    corpus = vectorizer.fit_transform(doc_list)
-    dictionary = vectorizer.vocabulary_
-    dictionary_inv = dict(zip(dictionary.values(), dictionary.keys()))
-    date_news_dict = dict(zip(date_list, doc_list))
+     
+    return dict(zip(date_list, doc_list))
 #    text_list_not_filtered = [tokenizer.tokenize(doc) for doc in doc_list]
 #    text_list = []
 #    for text in text_list_not_filtered:
@@ -76,8 +80,43 @@ def read_news(data_path, stop_list_path):
 #    print('Saving gensim corpus to ' + gensim_save_path + 'corpus.mm')
 #    corpora.MmCorpus.serialize(gensim_save_path + 'corpus.mm', corpus)  # store to disk, for later use
 #    # pprint(corpus)
-    return dictionary, corpus, date_news_dict
 
+def match_news_labels(date_news_dict, date_labels_dict):
+    news_labels_dict = {}
+    for p in date_news_dict.items():
+        date = p[0]
+        news = p[1]
+        if date in date_labels_dict.keys():
+            news_labels_dict[news] = date_labels_dict[date]
+    return news_labels_dict
+
+# Combine dictionaries of different companies together
+def combine_dicts(news_labels_dict_list):
+    combined_dict = {}
+    for i in range(len(news_labels_dict_list)):
+        if i == 0:
+            combined_dict = news_labels_dict_list[i]
+        else:
+            combined_dict.update(news_labels_dict_list[i])
+    return combined_dict
+    
+def build_corpus(combined_news_labels_dict, stop_list_path, num_gram):
+    # Create a stop word list
+    stop_list = set()
+    with open(stop_list_path, "r+") as f:
+      for line in f:
+        if not line.strip():
+        	continue
+        stop_list.add(line.strip().lower())
+        
+    news_list = list(combined_news_labels_dict.keys())
+    # Using nltk
+    tokenizer = RegexpTokenizer(r'[a-zA-Z]{2,}') # Exclude single letters
+    vectorizer = CountVectorizer(min_df=1, ngram_range=(1,num_gram), tokenizer=tokenizer.tokenize, stop_words=stop_list)
+    corpus = vectorizer.fit_transform(news_list)
+    dictionary = vectorizer.vocabulary_
+    return corpus, dictionary
+    
 #==============================================================================
 # Load existing gensim dictionary and corpus
 #==============================================================================
