@@ -1,0 +1,2 @@
+Training acc: 0.998, rec: 0.997, pre: 0.999, f1: 0.998
+Test acc: 0.507, rec: 0.522, pre: 0.461, f1: 0.490
