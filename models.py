@@ -16,6 +16,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.manifold import TSNE
 
 #==============================================================================
 # Define parameters
@@ -114,7 +115,10 @@ tokenizer = RegexpTokenizer(r'[a-zA-Z]{2,}') # Exclude single letters
 num_gram = 2
 # Count vectorize
 vectorizer = CountVectorizer(min_df=1, ngram_range=(1,num_gram), tokenizer=tokenizer.tokenize, stop_words=stop_list)
-corpus = vectorizer.fit_transform(corpus_text)
+total_corpus_text = np.append(corpus_text, test_corpus_text)
+vectorizer.fit(total_corpus_text)
+corpus = vectorizer.transform(corpus_text)
+#corpus = vectorizer.fit_transform(corpus_text)
 test_corpus = vectorizer.transform(test_corpus_text)
 
 # Chi2 test
@@ -149,6 +153,9 @@ test_corpus = vectorizer.transform(test_corpus_text)
 
 # Linear SVC
 model = LinearSVC(penalty='l1', dual=False)
+model.fit(corpus, labels)
+training_res = model.predict(corpus)
+test_res = model.predict(test_corpus)
 
 # Grid search
 C_range = np.linspace(1,10,10)
@@ -175,7 +182,7 @@ model = LinearSVC(C=grid.best_params_['C'], penalty='l1', dual=False)
 scores = cross_val_score(model, corpus, labels, cv=5)
 print('scores: %s' % scores)
 
-with open('bigram_svc_chi2_res.txt', 'w') as f:        
+with open('bigram_svc_chi2_w2v_res_all.txt', 'w') as f:        
     training_acc = accuracy_score(labels, training_res)
     training_rec = recall_score(labels, training_res)
     training_pre = precision_score(labels, training_res)
@@ -199,4 +206,12 @@ print("test accuracy: {:0.3f}".format(metrics.accuracy_score(test_labels, test_r
 s = pd.DataFrame({'Category':test_res})
 csv = s.to_csv('../data/test_res_bi_0.05.csv')
 
-
+#==============================================================================
+# Write news and label pair to file
+#==============================================================================
+with open('apple_news_labels.txt', 'w') as f:
+    for p in apple_news_labels_dict_train.items():
+        f.write('%s\n%s\n' %(p[1], p[0]))
+        
+tsne = TSNE(perplexity=30, n_components=2, init='pca', n_iter=5000)
+two_d_embeddings = tsne.fit_transform(corpus.todense())
